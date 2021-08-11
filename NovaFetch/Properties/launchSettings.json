@@ -1,0 +1,8 @@
+{
+  "profiles": {
+    "NovaFetch": {
+      "commandName": "Project",
+      "commandLineArgs": "-e 4821032 m17 \"C:\\Users\\jlikn\\source\\repos\\deepskyworkflows.github.io\\assets\\images\\gallery\\m17\""
+    }
+  }
+}

@@ -3,7 +3,7 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 16
 VisualStudioVersion = 16.0.31313.79
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NovaFetch", "NovaFetch\NovaFetch.csproj", "{8E15586D-7F9A-4FFF-9D03-6638ACFFB59F}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NovaFetch", "NovaFetch\NovaFetch.csproj", "{8E15586D-7F9A-4FFF-9D03-6638ACFFB59F}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{E9D910CB-150D-4C79-B909-E9EDB816B560}"
 	ProjectSection(SolutionItems) = preProject
@@ -11,6 +11,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 		.gitattributes = .gitattributes
 		.gitignore = .gitignore
 		Directory.Build.props = Directory.Build.props
+		.github\workflows\dotnet.yml = .github\workflows\dotnet.yml
 		LICENSE = LICENSE
 		README.md = README.md
 		stylecop.json = stylecop.json

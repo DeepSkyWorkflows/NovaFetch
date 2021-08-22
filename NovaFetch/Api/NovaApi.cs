@@ -54,10 +54,12 @@ namespace NovaFetch.Api
         public async Task<StatusResponse> CheckStatusAsync(string subId)
         {
             var result = await client.GetAsync($"submissions/{subId}");
+            result.EnsureSuccessStatusCode();
             var jsonResult = await result.Content.ReadAsStringAsync();
             try
             {
-                return JsonSerializer.Deserialize<StatusResponse>(jsonResult);
+                var response = JsonSerializer.Deserialize<StatusResponse>(jsonResult);
+                return response;
             }
             catch (Exception)
             {

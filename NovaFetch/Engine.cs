@@ -54,7 +54,7 @@ namespace NovaFetch
                     if (!config.SubmitOnly)
                     {
                         var result = await JobStatusAsync();
-                        if (!result.Success)
+                        if (result.Stage != Stages.Calibrated)
                         {
                             Console.WriteLine("Failed to plate solve.");
                             return;
@@ -199,19 +199,20 @@ namespace NovaFetch
         {
             Console.WriteLine($"Getting status for job {config.JobId}...");
             var done = false;
-            var started = false;
             StatusResponse status = null;
-            while (!done)
+            Stages stage = Stages.None;
+            var timeOut = DateTime.Now.AddMinutes(15);
+            while (!done && DateTime.Now < timeOut)
             {
                 status = await api.CheckStatusAsync(config.JobId);
-                if (!started && !string.IsNullOrWhiteSpace(status.Started))
+                done = status.Stage == Stages.Calibrated;
+                if ((int)status.Stage > (int)stage)
                 {
-                    started = true;
-                    Console.WriteLine("Processing started...");
+                    stage = status.Stage;
+                    Console.WriteLine($"{Environment.NewLine}{stage}");
                 }
 
-                done = started && status.Done;
-                Thread.Sleep(10000);
+                Thread.Sleep(1000);
                 Console.Write(".");
             }
 

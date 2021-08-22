@@ -1,6 +1,7 @@
 ﻿// Copyright (c) Jeremy Likness. All rights reserved.
 // Licensed under the MIT License. See LICENSE in the repository root for license information.
 
+using System.Linq;
 using System.Text.Json.Serialization;
 
 namespace NovaFetch.Model
@@ -23,16 +24,34 @@ namespace NovaFetch.Model
         public string Finished { get; set; }
 
         /// <summary>
-        /// Gets a value indicating whether processing is done.
+        /// Gets the stage of the process.
         /// </summary>
         [JsonIgnore]
-        public bool Done => Jobs.Length > 0 && Jobs[0] != null;
+        public Stages Stage
+        {
+            get
+            {
+                if (Jobs != null && Jobs.Length > 0)
+                {
+                    return JobCalibrations.SelectMany(jc => jc)
+                        .Any(jc => Jobs.Any(j => j == jc)) ?
+                        Stages.Calibrated : Stages.JobProcessing;
+                }
+
+                if (Images.Length > 0)
+                {
+                    return Stages.ImageAccepted;
+                }
+
+                return Stages.RequestSubmitted;
+            }
+        }
 
         /// <summary>
-        /// Gets a value indicating whether plate-solving was successful.
+        /// Gets or sets the image list.
         /// </summary>
-        [JsonIgnore]
-        public bool Success => Jobs.Length > 0;
+        [JsonPropertyName("images")]
+        public int[] Images { get; set; }
 
         /// <summary>
         /// Gets or sets the list of calibration jobs.

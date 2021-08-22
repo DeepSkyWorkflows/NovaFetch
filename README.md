@@ -69,12 +69,12 @@ Done.
 
 This indicates a successful job. When it is done, I open the target folder and it contains:
 
-- `__m31.jpg__` is your original file, renamed and copied. 
-- `__m31.md__` is a facts page with stats taken from the server like right ascension and declination. I move this to a special folder to register a new gallery item.
-- `__m31-annotated.jpg__` is a smaller version of the source file updated with the annotations.
-- `__m31-annotated-fs.jpg is a full-sized version of annotations.
-- `__m31_grid__` is your image with a gid overlay.
-- `__thumb.jpg__` is a scaled down version of the image.
+- __`m31.jpg`__ is your original file, renamed and copied. 
+- __`m31.md`__ is a facts page with stats taken from the server like right ascension and declination. I move this to a special folder to register a new gallery item.
+- __`m31-annotated.jpg`__ is a smaller version of the source file updated with the annotations.
+- __`m31-annotated-fs.jpg`__ is a full-sized version of annotations.
+- __`m31_grid`__ is your image with a gid overlay.
+- __`thumb.jpg`__ is a scaled down version of the image.
 
 ## The `-e` switch
 

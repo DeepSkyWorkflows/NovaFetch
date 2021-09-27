@@ -79,7 +79,7 @@ namespace NovaFetch.Api
         public async Task DownloadImageAsync(string jobId, string image, string downloadPath)
         {
             var imageUrl = $"http://nova.astrometry.net/{image}/{jobId}";
-            var retries = 3;
+            var retries = 1;
             while (retries > 0)
             {
                 var result = await client.GetAsync(imageUrl);

@@ -153,6 +153,16 @@ namespace NovaFetch
             Validate();
         }
 
+        /// <summary>
+        /// Sets the job id.
+        /// </summary>
+        /// <param name="jobId">The job id.</param>
+        public void SetJob(string jobId)
+        {
+            ExistingJob = true;
+            JobId = jobId;
+        }
+
         private static void Help()
         {
             Console.WriteLine("Abbreviated\tCommand\tDescription");

@@ -61,6 +61,7 @@ namespace NovaFetch
                         }
 
                         var jobId = result.Jobs[0].Value;
+                        config.SetJob(jobId.ToString());
 
                         await DownloadFilesAsync(jobId);
                         await DownloadCalibrationAsync(jobId);
@@ -86,6 +87,7 @@ namespace NovaFetch
             {
                 Console.WriteLine("Oops! Something unexpected happened.");
                 Console.WriteLine($"The error: {ex.Message}.");
+                throw;
             }
         }
 

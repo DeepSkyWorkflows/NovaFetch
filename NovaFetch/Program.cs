@@ -2,6 +2,7 @@
 // Licensed under the MIT License. See LICENSE in the repository root for license information.
 
 using System;
+using System.Threading;
 using NovaFetch;
 
 var version = typeof(TokenManager).Assembly.GetName().Version.ToString();
@@ -17,4 +18,23 @@ if (configuration.HelpOnly)
 }
 
 var engine = new Engine(tokenManager, configuration);
-await engine.RunAsync();
+var retry = false;
+
+try
+{
+    await engine.RunAsync();
+}
+catch
+{
+    if (!string.IsNullOrWhiteSpace(configuration.JobId))
+    {
+        retry = true;
+    }
+}
+
+if (retry)
+{
+    Console.WriteLine("Waiting 5 seconds to try again...");
+    Thread.Sleep(5000);
+    await engine.RunAsync();
+}

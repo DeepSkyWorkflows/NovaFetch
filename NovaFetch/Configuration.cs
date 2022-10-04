@@ -16,6 +16,8 @@ namespace NovaFetch
         private const string LONGHELP = "--help";
         private const string SHORTSUBMIT = "-s";
         private const string LONGSUBMIT = "--submit-only";
+        private const string SHORTTHUMB = "-t";
+        private const string LONGTHUMB = "--thumbnail-only";
         private const string SHORTEXISTING = "-e";
         private const string LONGEXISTING = "--existing";
 
@@ -26,6 +28,7 @@ namespace NovaFetch
                 "Display help. Use <option> -h for context-specific help.~Usage: NovaFetch [name] [pathToFile] <targetDir>"),
                 (SHORTSUBMIT, LONGSUBMIT, "Only submit. Don't wait on status.~Usage: NovaFetch -s [pathToFile] <targetDir>"),
                 (SHORTEXISTING, LONGEXISTING, "Start with existing job.~Usage: NovaFetch -e [jobId] [name] [pathToFile] <targetDir>"),
+                (SHORTTHUMB, LONGTHUMB, "No plate-solving - just create a thumbnail and generate the template."),
             };
 
         /// <summary>
@@ -42,6 +45,11 @@ namespace NovaFetch
         /// Gets a value indicating whether the tool should query an existing job.
         /// </summary>
         public bool ExistingJob { get; private set; }
+
+        /// <summary>
+        /// Gets a value indicating whether the tool should just generate the thumbnail.
+        /// </summary>
+        public bool ThumbOnly { get; private set; }
 
         /// <summary>
         /// Gets or sets the job id for the job to query.
@@ -102,6 +110,12 @@ namespace NovaFetch
                     case LONGEXISTING:
                         Console.WriteLine("Existing only. Will query existing job.");
                         ExistingJob = true;
+                        break;
+
+                    case SHORTTHUMB:
+                    case LONGTHUMB:
+                        Console.WriteLine("Thumbnails only.");
+                        ThumbOnly = true;
                         break;
 
                     default:

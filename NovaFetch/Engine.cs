@@ -42,29 +42,36 @@ namespace NovaFetch
         {
             try
             {
-                if (await LoginAsync())
+                if (config.ThumbOnly || await LoginAsync())
                 {
                     ShowConfig();
 
-                    if (!config.ExistingJob)
+                    if (!config.ThumbOnly && !config.ExistingJob)
                     {
                         await UploadAsync();
                     }
 
-                    if (!config.SubmitOnly)
+                    if (config.ThumbOnly || !config.SubmitOnly)
                     {
-                        var result = await JobStatusAsync();
-                        if (result.Stage != Stages.Calibrated)
+                        if (config.ThumbOnly)
                         {
-                            Console.WriteLine("Failed to plate solve.");
-                            return;
+                            await GenerateFileAsync(null, null);
                         }
+                        else
+                        {
+                            var result = await JobStatusAsync();
+                            if (result.Stage != Stages.Calibrated)
+                            {
+                                Console.WriteLine("Failed to plate solve.");
+                                return;
+                            }
 
-                        var jobId = result.Jobs[0].Value;
-                        config.SetJob(jobId.ToString());
+                            var jobId = result.Jobs[0].Value;
+                            config.SetJob(jobId.ToString());
 
-                        await DownloadFilesAsync(jobId);
-                        await DownloadCalibrationAsync(jobId);
+                            await DownloadFilesAsync(jobId);
+                            await DownloadCalibrationAsync(jobId);
+                        }
 
                         Console.WriteLine("Final tasks...");
 
@@ -146,13 +153,19 @@ namespace NovaFetch
         {
             var calibration = await api.GetCalibrationDataAsync(jobId.ToString());
             var objects = await api.GetObjectsAsync(jobId.ToString());
+            await GenerateFileAsync(calibration, objects);
+        }
+
+        private async Task GenerateFileAsync(CalibrationResponse calibration, ObjectsResponse objects)
+        {
+            var tags = objects == null ? new[] { "tag" } : objects.Objects.Select(o => $"\"{o}\"").ToArray();
             var dataFile = new List<string>
             {
                 "---",
                 $"title: \"{config.Name}\"",
                 "type:",
                 "tags: [" +
-                string.Join(",", objects.Objects.Select(o => $"\"{o}\"").ToArray()) +
+                    string.Join(",", tags) +
                 "]",
                 "description:",
                 $"image: /assets/images/gallery/{config.Name}/thumb.jpg",
@@ -165,13 +178,27 @@ namespace NovaFetch
                 "sessions: ",
                 "firstCapture: ",
                 "lastCapture:",
-                $"ra: \"{DegreesToRA(calibration.RightAscension)}\"",
-                $"dec: \"{DecToDegrees(calibration.Declination)}\"",
-                $"size: \"{Math.Round(calibration.Width / 60, 3)} x {Math.Round(calibration.Height / 60, 3)} arcmin\"",
-                $"radius: \"{Math.Round(calibration.Radius, 3)} deg\"",
-                $"scale: \"{Math.Round(calibration.PixelScale, 3)} arcsec/pixel\"",
-                "---",
             };
+
+            if (calibration != null)
+            {
+                dataFile.AddRange(new[]
+                {
+                    $"ra: \"{DegreesToRA(calibration.RightAscension)}\"",
+                    $"dec: \"{DecToDegrees(calibration.Declination)}\"",
+                    $"size: \"{Math.Round(calibration.Width / 60, 3)} x {Math.Round(calibration.Height / 60, 3)} arcmin\"",
+                    $"radius: \"{Math.Round(calibration.Radius, 3)} deg\"",
+                    $"scale: \"{Math.Round(calibration.PixelScale, 3)} arcsec/pixel\"",
+                });
+            }
+
+            if (config.ThumbOnly)
+            {
+                dataFile.Add("noannotations: true");
+            }
+
+            dataFile.Add("---");
+
             var fileName = Path.Combine(config.TargetDirectory, $"{config.Name}.md");
             Console.WriteLine(string.Join(Environment.NewLine, dataFile));
             Console.WriteLine($"Writing data to {fileName}");

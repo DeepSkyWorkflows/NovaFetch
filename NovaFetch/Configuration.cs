@@ -12,6 +12,8 @@ namespace NovaFetch
     /// </summary>
     public class Configuration
     {
+        private const string CONTENTTARGET = @"source\repos\deepskyworkflows.github.io\_gallery";
+        private const string ROOTTARGET = @"source\repos\deepskyworkflows.github.io\assets\images\gallery";
         private const string SHORTHELP = "-h";
         private const string LONGHELP = "--help";
         private const string SHORTSUBMIT = "-s";
@@ -70,6 +72,20 @@ namespace NovaFetch
         /// Gets the target directory to place results.
         /// </summary>
         public string TargetDirectory { get; private set; }
+
+        /// <summary>
+        /// Gets the date the file was created.
+        /// </summary>
+        public DateTime? CreateDate { get; private set; }
+
+        /// <summary>
+        /// Gets the directory for markdown.
+        /// </summary>
+        public string ContentDirectory { get; private set; } =
+            Path.Combine(
+                @"c:\users",
+                Environment.UserName,
+                CONTENTTARGET);
 
         /// <summary>
         /// Parses settings from the command line.
@@ -153,15 +169,35 @@ namespace NovaFetch
                     }
 
                     FilePath = cmd;
+
+                    CreateDate = new FileInfo(FilePath).CreationTime;
                     continue;
                 }
 
                 if (!Directory.Exists(cmd))
                 {
-                    throw new DirectoryNotFoundException(cmd);
+                    if (cmd == "*")
+                    {
+                        var tgt = Path.Combine(
+                            @"c:\users",
+                            Environment.UserName,
+                            ROOTTARGET,
+                            Name);
+                        if (!Directory.Exists(tgt))
+                        {
+                            Directory.CreateDirectory(tgt);
+                            TargetDirectory = tgt;
+                        }
+                    }
+                    else
+                    {
+                        throw new DirectoryNotFoundException(cmd);
+                    }
                 }
-
-                TargetDirectory = cmd;
+                else
+                {
+                    TargetDirectory = cmd;
+                }
             }
 
             Validate();

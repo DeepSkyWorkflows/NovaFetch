@@ -159,6 +159,7 @@ namespace NovaFetch
         private async Task GenerateFileAsync(CalibrationResponse calibration, ObjectsResponse objects)
         {
             var tags = objects == null ? new[] { "tag" } : objects.Objects.Select(o => $"\"{o}\"").ToArray();
+            var capture = $"{config.CreateDate.Value.Year}-{config.CreateDate.Value.Month:00}-{config.CreateDate.Value.Day:00}";
             var dataFile = new List<string>
             {
                 "---",
@@ -172,12 +173,15 @@ namespace NovaFetch
                 "telescope: Stellina",
                 "length: \"400mm\"",
                 "aperture: \"80mm\"",
-                $"folder: {config.TargetDirectory.Split(Path.DirectorySeparatorChar)[^1]}",
+                "wwt: ",
+                "signature: false",
+                "group:",
+                $"folder: {config.Name}",
                 "exposure: ",
                 "lights: ",
                 "sessions: ",
-                "firstCapture: ",
-                "lastCapture:",
+                $"firstCapture: {capture}",
+                $"lastCapture: {capture}",
             };
 
             if (calibration != null)
@@ -199,7 +203,7 @@ namespace NovaFetch
 
             dataFile.Add("---");
 
-            var fileName = Path.Combine(config.TargetDirectory, $"{config.Name}.md");
+            var fileName = Path.Combine(config.ContentDirectory, $"{config.Name}.md");
             Console.WriteLine(string.Join(Environment.NewLine, dataFile));
             Console.WriteLine($"Writing data to {fileName}");
             await File.WriteAllLinesAsync(fileName, dataFile);

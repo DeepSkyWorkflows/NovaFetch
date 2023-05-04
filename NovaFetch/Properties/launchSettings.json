@@ -2,7 +2,7 @@
   "profiles": {
     "NovaFetch": {
       "commandName": "Project",
-      "commandLineArgs": " test \"C:\\Users\\jlikn\\Downloads\\m3-processed.jpg\" \"c:\\temp\\test\""
+      "commandLineArgs": " iris-meteor \"C:\\Users\\jlikn\\Downloads\\todo\\iris_meteor.jpg\" *"
     }
   }
 }
